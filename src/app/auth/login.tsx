@@ -1,19 +1,41 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle login logic here
-    console.log("Login submitted", { email, password })
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
+
+      alert("Login successful");
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Email
         </label>
         <input
@@ -27,7 +49,10 @@ export function LoginForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Password
         </label>
         <input
@@ -39,6 +64,7 @@ export function LoginForm() {
           required
         />
       </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
       <button
         type="submit"
         className="w-full rounded-md bg-blue-500 py-2 px-4 font-semibold text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
@@ -46,6 +72,5 @@ export function LoginForm() {
         Log in
       </button>
     </form>
-  )
+  );
 }
-

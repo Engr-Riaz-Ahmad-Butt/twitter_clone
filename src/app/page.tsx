@@ -5,8 +5,10 @@ import { TwitterIcon } from "lucide-react"
 import { LoginForm } from "./auth/login"
 import { SignupForm } from "./auth/signup"
 
+
 export default function Home() {
-  const [isLogin, setIsLogin] = useState(true)
+  const [isLogin, setIsLogin] = useState(false)
+
   
   return (
     <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900">
