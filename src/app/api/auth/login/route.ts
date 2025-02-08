@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     if (!isMatch) return NextResponse.json({ error: "Invalid credentials" }, { status: 400 });
 
     return NextResponse.json({ message: "Login successful", user }, { status: 200 });
-  } catch (error) {
+  } catch{
     return NextResponse.json({ error: "Login failed" }, { status: 400 });
   }
 }

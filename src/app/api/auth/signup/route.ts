@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       { user, message: "Signup successful" },
       { status: 201 }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Signup failed" }, { status: 400 });
   }
 }

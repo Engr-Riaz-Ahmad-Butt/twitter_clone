@@ -24,7 +24,7 @@ export function LoginForm() {
       }
 
       alert("Login successful");
-    } catch (err) {
+    } catch {
       setError("Something went wrong. Please try again.");
     }
   };

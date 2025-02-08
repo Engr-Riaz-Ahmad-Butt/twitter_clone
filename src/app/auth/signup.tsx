@@ -150,10 +150,12 @@ export function SignupForm() {
           "Content-Type": "application/json",
         },
       });
-    } catch (error: any) {
-      throw new Error(
-        error.response?.data?.error || "An unexpected error occurred"
-      );
+    }catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        throw new Error(error.response.data?.error || "An unexpected error occurred");
+      } else {
+        throw new Error("An unexpected error occurred");
+      }
     }
   };
 
