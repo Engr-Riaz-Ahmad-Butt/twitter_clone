@@ -12,6 +12,7 @@ export function middleware(req: NextRequest) {
     jwt.verify(token, process.env.JWT_SECRET as string);
     return NextResponse.next();
   } catch (error) {
+    console.log("Error verifying token:", error);
     return NextResponse.redirect(new URL("/login", req.url)); 
   }
 }

@@ -28,7 +28,8 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ message: "Login successful", user, token }, { status: 200 });
-  } catch{
+  } catch(error){
+    console.error("Login Error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 400 });
   }
 }

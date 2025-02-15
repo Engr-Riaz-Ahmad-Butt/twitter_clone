@@ -31,6 +31,10 @@ export function SignupForm() {
       throw new Error(data.error || "An unexpected error occurred");
     }
 
+    const data = await response.json();
+    // On successful login, store the token in localStorage
+    localStorage.setItem("jwtToken", data.token);
+
     return response.json();
   };
 
@@ -54,7 +58,10 @@ export function SignupForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Name
         </label>
         <input
@@ -68,7 +75,10 @@ export function SignupForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Email
         </label>
         <input
@@ -82,7 +92,10 @@ export function SignupForm() {
         />
       </div>
       <div className="space-y-2">
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
           Password
         </label>
         <input

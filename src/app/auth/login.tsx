@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,10 @@ export function LoginForm() {
         return;
       }
 
+      localStorage.setItem("jwtToken", data.token);
+
       alert("Login successful");
+      router.push("/home");
     } catch {
       setError("Something went wrong. Please try again.");
     }

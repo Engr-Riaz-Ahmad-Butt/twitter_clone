@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   TwitterIcon,
   Heart,
@@ -9,6 +9,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import io from "socket.io-client";
 
 interface Post {
   id: number;
@@ -19,23 +20,62 @@ interface Post {
 }
 
 export default function FeedPage() {
-  const [error, setError] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState("");
   const router = useRouter();
 
-  const handlePostSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    // Connect to WebSocket server
+    const socket = io('http://localhost:3001', {
+      transports: ['websocket'],
+      reconnection: true,
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to WebSocket server');
+    });
+    
+    socket.on('newPost', (data) => {
+      console.log('New post received:', data);
+      // Update the UI with the new post
+      setPosts((prevPosts) => [data.post, ...prevPosts]);
+    });
+
+    socket.on('connect_error', (error) => {
+      console.log('WebSocket connection error:', error);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPost.trim()) {
-      const post: Post = {
-        id: Date.now(),
-        content: newPost,
-        likes: 0,
-        comments: 0,
-        shares: 0,
-      };
-      setPosts([post, ...posts]);
-      setNewPost("");
+      try {
+        const res = await fetch("/api/post", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+          body: JSON.stringify({ content: newPost }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          alert(data.error || "Failed to create post");
+          return;
+        }
+
+        // Clear the input field after posting
+        setNewPost("");
+      } catch (error) {
+        alert("Failed to create post");
+        console.error("Post creation failed:", error);
+      }
     }
   };
 
@@ -48,7 +88,6 @@ export default function FeedPage() {
   };
 
   const handleLogout = async () => {
-    setError("");
     try {
       const res = await fetch("/api/auth/logout", {
         method: "POST",
@@ -57,7 +96,7 @@ export default function FeedPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error || "Logout failed");
+        alert(data.error || "Logout failed");
         return;
       }
       alert("Logout successful");
