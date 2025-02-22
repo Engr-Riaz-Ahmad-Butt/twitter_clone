@@ -35,7 +35,7 @@ export function SignupForm() {
     // On successful login, store the token in localStorage
     localStorage.setItem("jwtToken", data.token);
 
-    return response.json();
+    return data;
   };
 
   const { mutate, isPending } = useMutation({
